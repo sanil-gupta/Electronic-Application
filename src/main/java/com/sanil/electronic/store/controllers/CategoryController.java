@@ -4,6 +4,7 @@ import com.sanil.electronic.store.dtos.*;
 import com.sanil.electronic.store.services.CategoryService;
 import com.sanil.electronic.store.services.FileService;
 import com.sanil.electronic.store.services.ProductService;
+import io.swagger.annotations.Api;
 import org.hibernate.sql.Update;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +26,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
+@Api(value = "CategoryController",description = "APIs related to CategoryController")
 public class CategoryController {
 
     Logger logger = LoggerFactory.getLogger(CategoryController.class);
@@ -39,6 +42,7 @@ public class CategoryController {
 
     //create
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
         CategoryDto categoryDto1 = categoryService.create(categoryDto);
         return new ResponseEntity<>(categoryDto1, HttpStatus.CREATED);
@@ -46,6 +50,7 @@ public class CategoryController {
 
     //update
     @PutMapping("/{categoryId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> updateCategory(
             @PathVariable("categoryId") String categoryId,
             @RequestBody CategoryDto categoryDto) {
@@ -56,6 +61,7 @@ public class CategoryController {
 
     //delete
     @DeleteMapping("/{categoryId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponseMessage> deleteCategory(@PathVariable("categoryId") String categoryId) {
         categoryService.delete(categoryId);
         ApiResponseMessage responseMessage = ApiResponseMessage.builder().message("Category is deleted Successfully !!").httpStatus(HttpStatus.OK).success(true).build();

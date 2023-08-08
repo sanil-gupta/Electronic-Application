@@ -15,7 +15,6 @@ import java.util.Date;
 @ToString
 public class ProductDto {
     private String productId;
-
     @NotBlank(message = "Title Required!")
     private String title;
     @NotBlank(message = "Description Requited!!")

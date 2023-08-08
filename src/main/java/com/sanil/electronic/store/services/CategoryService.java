@@ -18,7 +18,7 @@ public interface CategoryService {
     void delete(String categoryId);
 
     //getAll
-    PageableResponse<CategoryDto > getAll(int pageNumber, int pageSize, String sort, String sortDir);
+    PageableResponse<CategoryDto> getAll(int pageNumber, int pageSize, String sort, String sortDir);
 
     //get single category detail
     CategoryDto getById(String categoryId);

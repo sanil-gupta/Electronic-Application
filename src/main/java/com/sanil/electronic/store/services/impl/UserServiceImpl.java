@@ -3,9 +3,11 @@ package com.sanil.electronic.store.services.impl;
 import com.sanil.electronic.store.controllers.UserController;
 import com.sanil.electronic.store.dtos.PageableResponse;
 import com.sanil.electronic.store.dtos.UserDto;
+import com.sanil.electronic.store.entities.Role;
 import com.sanil.electronic.store.entities.User;
 import com.sanil.electronic.store.exception.ResourceNotFoundException;
 import com.sanil.electronic.store.helper.Helper;
+import com.sanil.electronic.store.repositories.RoleRepository;
 import com.sanil.electronic.store.repositories.UserRepository;
 import com.sanil.electronic.store.services.UserService;
 import org.modelmapper.ModelMapper;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -36,8 +39,18 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper mapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Value("${user.profile.image.path}")
     private String imagePath;
+
+    @Value("${normal.role.id}")
+    private String normalRoleId;
+
 
     private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -48,8 +61,16 @@ public class UserServiceImpl implements UserService {
         String userId = UUID.randomUUID().toString();
         userDto.setUserId(userId);
 
+        //encoding password (security module)
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
         //dto -> Entity
         User user = dtoToEntity(userDto);
+
+        //By this we are passing the normal_role_id which means whenever new user will create by-default it's role will be NORMAL_USER
+        Role role = roleRepository.findById(normalRoleId).get();
+        user.getRoles().add(role);
+
         User savedUser = userRepository.save(user);
 
         // Entity -> dto
@@ -61,7 +82,6 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto, String userId) {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with the given id!!"));
-
         user.setName(userDto.getName());
         user.setAbout(userDto.getAbout());
         user.setGender(userDto.getGender());
@@ -74,7 +94,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(String userId) {
+    public void deleteUser(String userId) throws ResourceNotFoundException {
 
         //first find the user of givenId
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with the given Id"));
@@ -85,8 +105,7 @@ public class UserServiceImpl implements UserService {
             Path path = Paths.get(fullPath);
             Files.delete(path);
         } catch (IOException e) {
-            logger.info("User image not found in folder");
-            throw new ResourceNotFoundException();
+            logger.info("User Image not found in folder");
         }
         userRepository.delete(user);
     }

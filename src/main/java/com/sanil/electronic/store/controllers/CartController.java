@@ -4,16 +4,16 @@ import com.sanil.electronic.store.dtos.AddItemToCartRequest;
 import com.sanil.electronic.store.dtos.ApiResponseMessage;
 import com.sanil.electronic.store.dtos.CartDto;
 import com.sanil.electronic.store.services.CartService;
-import lombok.Getter;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.concurrent.locks.ReadWriteLock;
 
 @RestController
 @RequestMapping("/carts")
+@Api(value = "CartController",description = "APIs related to cart")
 public class CartController {
 
     @Autowired
@@ -26,9 +26,10 @@ public class CartController {
         return new ResponseEntity<>(cartDto, HttpStatus.OK);
     }
 
+    //remove item from cart
     @DeleteMapping("/{userId}/item/{itemId}")
-    public ResponseEntity<ApiResponseMessage> removeItemFromCart(@PathVariable("userId") String userId, @PathVariable("itemId") int itemId) {
-        cartService.removeItemFormCart(userId, itemId);
+    public ResponseEntity<ApiResponseMessage> removeItemFromCart(@PathVariable("itemId") int itemId) {
+        cartService.removeItemFormCart(itemId);
         ApiResponseMessage response = ApiResponseMessage.builder().message("Item is removed")
                 .success(true)
                 .httpStatus(HttpStatus.OK)
@@ -36,6 +37,7 @@ public class CartController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    //clear cart
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponseMessage> clearCart(@PathVariable("userId") String userId) {
         cartService.clearCart(userId);
@@ -46,6 +48,7 @@ public class CartController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    //get cart
     @GetMapping("/{userId}")
     public ResponseEntity<CartDto> getCart(@PathVariable("userId") String userId) {
         CartDto cartDto = cartService.getCartByUser(userId);

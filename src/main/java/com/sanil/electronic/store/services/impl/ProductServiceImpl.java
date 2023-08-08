@@ -72,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProduct(String productId) {
+    public void deleteProduct(String productId) throws ResourceNotFoundException {
 
         //fetch the product for the given productId
         Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found with the given id"));
@@ -84,7 +84,6 @@ public class ProductServiceImpl implements ProductService {
             Files.delete(path);
         } catch (IOException e) {
             logger.info("Product image not found in folder");
-            throw new ResourceNotFoundException();
         }
         //delete product
         productRepository.delete(product);

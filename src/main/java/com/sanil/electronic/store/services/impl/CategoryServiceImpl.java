@@ -66,7 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void delete(String categoryId) {
+    public void delete(String categoryId) throws ResourceNotFoundException {
         //get category details
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found with given Id "));
 
@@ -77,7 +77,7 @@ public class CategoryServiceImpl implements CategoryService {
             Files.delete(path);
         } catch (IOException e) {
             logger.info("User image not found in folder");
-            throw new ResourceNotFoundException();
+
         }
         categoryRepository.delete(category);
     }

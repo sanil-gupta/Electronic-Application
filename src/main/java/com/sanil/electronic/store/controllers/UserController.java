@@ -6,6 +6,7 @@ import com.sanil.electronic.store.dtos.PageableResponse;
 import com.sanil.electronic.store.dtos.UserDto;
 import com.sanil.electronic.store.services.FileService;
 import com.sanil.electronic.store.services.UserService;
+import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@Api(value = "UserController", description = "All APIs Related to UserController !!")
 public class UserController {
 
     @Autowired

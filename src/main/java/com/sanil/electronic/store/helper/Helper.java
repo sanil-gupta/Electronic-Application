@@ -1,8 +1,6 @@
 package com.sanil.electronic.store.helper;
 
 import com.sanil.electronic.store.dtos.PageableResponse;
-import com.sanil.electronic.store.dtos.UserDto;
-import com.sanil.electronic.store.entities.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 
@@ -21,7 +19,6 @@ public class Helper {
         response.setTotalElements(page.getTotalElements());
         response.setTotalPages(page.getTotalPages());
         response.setLastPage(page.isLast());
-
         return response;
 
     }

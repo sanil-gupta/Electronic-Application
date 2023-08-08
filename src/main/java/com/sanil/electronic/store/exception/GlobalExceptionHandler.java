@@ -16,44 +16,39 @@ import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler
-{
+public class GlobalExceptionHandler {
     Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    //handle Resource not found Exception
+    //Handle Resource not found Exception
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponseMessage> resourceNotFoundExceptionHandler(ResourceNotFoundException ex)
-    {
-        logger.info("Exception Handler Invoked !!");
+    public ResponseEntity<ApiResponseMessage> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
+        logger.info("Resource not found !! " );
         ApiResponseMessage response = ApiResponseMessage
-                                        .builder()
-                                        .message(ex.getMessage())
-                                        .httpStatus(HttpStatus.NOT_FOUND)
-                                        .success(true)
-                                        .build();
-        return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+                .builder()
+                .message(ex.getMessage())
+                .httpStatus(HttpStatus.NOT_FOUND)
+                .success(true)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     //MethodArgumentNotValidException
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String,Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex)
-    {
-            List<ObjectError> allErrors = ex.getBindingResult().getAllErrors();
-
-            Map<String,Object> response = new HashMap<>();
-
-            allErrors.stream().forEach(ObjectError -> {
-                String message = ObjectError.getDefaultMessage();
-                String field = ((FieldError)ObjectError).getField();
-                response.put(field,message);
-            });
-            return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        logger.info("MethodArgumentNotValidException !! ");
+        List<ObjectError> allErrors = ex.getBindingResult().getAllErrors();
+        Map<String, Object> response = new HashMap<>();
+        allErrors.stream().forEach(ObjectError -> {
+            String message = ObjectError.getDefaultMessage();
+            String field = ((FieldError) ObjectError).getField();
+            response.put(field, message);
+        });
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     //Handle bad api exception
     @ExceptionHandler(BadApiRequestException.class)
-    public ResponseEntity<ApiResponseMessage> handleBadApiRequest(BadApiRequestException ex)
-    {
+    public ResponseEntity<ApiResponseMessage> handleBadApiRequest(BadApiRequestException ex) {
         logger.info("Bad Api Request !!");
         ApiResponseMessage response = ApiResponseMessage
                 .builder()
@@ -61,6 +56,6 @@ public class GlobalExceptionHandler
                 .httpStatus(HttpStatus.BAD_REQUEST)
                 .success(false)
                 .build();
-        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

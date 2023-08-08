@@ -3,11 +3,13 @@ package com.sanil.electronic.store.controllers;
 import com.sanil.electronic.store.dtos.*;
 import com.sanil.electronic.store.services.FileService;
 import com.sanil.electronic.store.services.ProductService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +21,7 @@ import java.io.InputStream;
 
 @RestController
 @RequestMapping("/products")
+@Api(value = "ProductController", description = "APIs related to ProductController")
 public class ProductController {
     @Autowired
     private ProductService productService;
@@ -29,6 +32,7 @@ public class ProductController {
 
     //create
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody ProductDto productDto) {
         ProductDto product = productService.createProduct(productDto);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
@@ -36,6 +40,7 @@ public class ProductController {
 
     //update
     @PutMapping("/{productId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductDto> updateProduct(@Valid @RequestBody ProductDto productDto, @PathVariable("productId") String productId) {
         ProductDto updatedProduct = productService.updateProduct(productDto, productId);
         return new ResponseEntity<>(productDto, HttpStatus.OK);
@@ -43,6 +48,7 @@ public class ProductController {
 
     //delete
     @DeleteMapping("/{productId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponseMessage> deleteProduct(@PathVariable("productId") String productId) {
         productService.deleteProduct(productId);
         ApiResponseMessage responseMessage = ApiResponseMessage.builder().message("Product Is Deleted successfully").httpStatus(HttpStatus.OK).success(true).build();
@@ -89,6 +95,7 @@ public class ProductController {
 
     //upload image
     @PostMapping("/image/{productId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ImageResponse> uploadProductImage(@PathVariable("productId") String productId,
                                                             @RequestParam("productImage") MultipartFile productImage) throws IOException {
         ProductDto productDto = productService.getSingleProduct(productId);
