@@ -72,7 +72,7 @@ public class UserController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     //get all
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<PageableResponse<UserDto>> getAllUsers(
                         @RequestParam(value = "pageNumber",defaultValue = "0",required = false) int pageNumber,
                         @RequestParam(value = "pageSize",defaultValue = "10",required = false) int pageSize,
